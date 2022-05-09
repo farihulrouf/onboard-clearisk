@@ -1,4 +1,4 @@
-module BE_CLEARISK.IO
+module onboard-clearisk
 
 go 1.18
 

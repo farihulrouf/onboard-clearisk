@@ -1,8 +1,9 @@
 package main
 
 import (
-    "BE_CLEARISK.IO/configs" 
-    "github.com/gofiber/fiber/v2" 
+    "onboard-clearisk/configs"
+    "onboard-clearisk/routes" //add this
+    "github.com/gofiber/fiber/v2"
 )
 
 func main() {
@@ -11,12 +12,8 @@ func main() {
     //run database
     configs.ConnectDB()
 
-    app.Listen("127.0.0.1:2222")
-}
+    //routes
+    routes.UserRoute(app) //add this
 
-/*
-app.Listen(8080)
-app.Listen("8080")
-app.Listen(":8080")
-app.Listen("127.0.0.1:8080")
-*/
+    app.Listen(":2222")
+}
