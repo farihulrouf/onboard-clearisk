@@ -1,0 +1,5 @@
+environtment: dev
+mongo:
+  server: mongodb+srv://farihul_clearisk:pervianAB12@cluster0.5e0y3.mongodb.net/clearisk.io?retryWrites=true&w=majority
+  database: clearisk
+  collection: Todos
