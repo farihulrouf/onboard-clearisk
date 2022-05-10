@@ -70,3 +70,19 @@ func GetAllTodos(c *fiber.Ctx) error {
 	 )
 
 }
+
+func GetTodo(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    todoId := c.Params("todoId")
+    var todo models.Todo
+    defer cancel()
+  
+    objId, _ := primitive.ObjectIDFromHex(todoId)
+  
+    err := todoCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&todo)
+    if err != nil {
+        return c.Status(http.StatusInternalServerError).JSON(responses.TodoResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+    }
+  
+    return c.Status(http.StatusOK).JSON(responses.TodoResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": todo}})
+}
