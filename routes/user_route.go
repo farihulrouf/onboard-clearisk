@@ -19,4 +19,6 @@ func UserRoute(app *fiber.App) {
     app.Get("/todo/:todoId", controllers.GetTodo)
     app.Delete("/todo/:todoId", controllers.DeleteATodo)
     app.Put("/todo/:todoId", controllers.EditATodo)
+
+    app.Post("/jobdesk", controllers.CreateJobdesk)
 }
