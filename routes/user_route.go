@@ -13,4 +13,6 @@ func UserRoute(app *fiber.App) {
     app.Get("/user/:userId", controllers.GetAUser)
     app.Put("/user/:userId", controllers.EditAUser)
     app.Delete("/user/:userId", controllers.DeleteAUser)
+
+    app.Post("/todo", controllers.CreateTodo)
 }

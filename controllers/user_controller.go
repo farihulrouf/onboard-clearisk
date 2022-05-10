@@ -153,4 +153,3 @@ func DeleteAUser(c *fiber.Ctx) error {
         responses.UserResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": "User successfully deleted!"}},
     )
 }
-
