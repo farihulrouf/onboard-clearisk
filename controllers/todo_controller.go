@@ -108,3 +108,42 @@ func DeleteATodo(c *fiber.Ctx) error {
         responses.TodoResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": "Todo successfully deleted!"}},
     )
 }
+
+//func edit todos
+//func edit ussers
+func EditATodo(c *fiber.Ctx) error {
+    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    todoId := c.Params("todoId")
+    var todo models.Todo
+    defer cancel()
+  
+    objId, _ := primitive.ObjectIDFromHex(todoId)
+  
+    //validate the request body
+    if err := c.BodyParser(&todo); err != nil {
+        return c.Status(http.StatusBadRequest).JSON(responses.TodoResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+    }
+  
+    //use the validator library to validate required fields
+    if validationErr := validate.Struct(&todo); validationErr != nil {
+        return c.Status(http.StatusBadRequest).JSON(responses.TodoResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": validationErr.Error()}})
+    }
+  
+    update := bson.M{"title": todo.Title, "desc": todo.Desc, "duration": todo.Duration}
+  
+    result, err := todoCollection.UpdateOne(ctx, bson.M{"id": objId}, bson.M{"$set": update})
+    if err != nil {
+        return c.Status(http.StatusInternalServerError).JSON(responses.TodoResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+    }
+  
+    //get updated user details
+    var updatedTodo models.Todo
+    if result.MatchedCount == 1 {
+        err := todoCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&updatedTodo)
+        if err != nil {
+            return c.Status(http.StatusInternalServerError).JSON(responses.TodoResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+        }
+    }
+  
+    return c.Status(http.StatusOK).JSON(responses.TodoResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": updatedTodo}})
+}
