@@ -86,3 +86,25 @@ func GetTodo(c *fiber.Ctx) error {
   
     return c.Status(http.StatusOK).JSON(responses.TodoResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": todo}})
 }
+
+func DeleteATodo(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	todoId := c.Params("todoId")
+	defer cancel()
+
+	objId, _:= primitive.ObjectIDFromHex(todoId)
+	result, err := todoCollection.DeleteOne(ctx, bson.M{"id": objId})
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(responses.TodoResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+	}
+
+	if result.DeletedCount < 1 {
+        return c.Status(http.StatusNotFound).JSON(
+            responses.TodoResponse{Status: http.StatusNotFound, Message: "error", Data: &fiber.Map{"data": "Todo with specified ID not found!"}},
+        )
+    }
+
+	return c.Status(http.StatusOK).JSON(
+        responses.TodoResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": "Todo successfully deleted!"}},
+    )
+}
