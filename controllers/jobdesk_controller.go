@@ -21,11 +21,11 @@ func CreateJobdesk(c *fiber.Ctx) error {
 	defer cancel()
 
 	if err := c.BodyParser(&jobdesk); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(responses.JobDeskResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+		return c.Status(http.StatusBadRequest).JSON(responses.DataResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": err.Error()}})
 	}
 
 	if validationErr := validate.Struct(&jobdesk); validationErr != nil {
-        return c.Status(http.StatusBadRequest).JSON(responses.JobDeskResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": validationErr.Error()}})
+        return c.Status(http.StatusBadRequest).JSON(responses.DataResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": validationErr.Error()}})
     }
 
 	newJobdesk := models.Jobdesk{
@@ -36,9 +36,9 @@ func CreateJobdesk(c *fiber.Ctx) error {
     }
 	result, err := jobdeskCollection.InsertOne(ctx, newJobdesk)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(responses.JobDeskResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+		return c.Status(http.StatusInternalServerError).JSON(responses.DataResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
 	}
-	return c.Status(http.StatusCreated).JSON(responses.JobDeskResponse{Status: http.StatusCreated, Message: "success", Data: &fiber.Map{"data": result}})
+	return c.Status(http.StatusCreated).JSON(responses.DataResponse{Status: http.StatusCreated, Message: "success", Data: &fiber.Map{"data": result}})
 }
 
 
